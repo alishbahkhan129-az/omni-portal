@@ -1,0 +1,3 @@
+@import "tailwindcss";
+/* Ye line Tailwind ko batayegi ke 'dark' class dekh kar mode change kare */
+@custom-variant dark (&:where(.dark, .dark *));

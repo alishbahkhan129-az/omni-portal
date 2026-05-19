@@ -1,0 +1,114 @@
+/* Button ka style aur border change karne ke liye */
+.counter {
+  font-size: 16px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 2px solid transparent;
+  transition: 0.3s;
+  margin-bottom: 24px;
+}
+
+/* Jab mouse button pe jaye to border color badle */
+.counter:hover {
+  border-color: var(--accent-border);
+}
+
+/* Hero section ki images ko set karne ke liye */
+.hero {
+  position: relative;
+}
+
+.hero .base,
+.hero .framework,
+.hero .vite {
+  margin: 0 auto;
+}
+
+.hero .base {
+  width: 170px;
+  position: relative;
+}
+
+/* Inko thoda rotate kiya hai design ke liye */
+.hero .framework {
+  position: absolute;
+  top: 35px;
+  height: 25px;
+  transform: rotate(-10deg) scale(1.2);
+}
+
+.hero .vite {
+  position: absolute;
+  top: 100px;
+  height: 25px;
+  transform: scale(0.8);
+}
+
+/* Beech wala area center karne ke liye */
+#center {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile par spacing thodi kam ho jaye */
+@media (max-width: 1024px) {
+  #center {
+    padding: 20px;
+    gap: 15px;
+  }
+}
+
+/* Nichay wale links aur boxes ka style */
+#next-steps {
+  display: flex;
+  border-top: 1px solid var(--border);
+}
+
+#next-steps > div {
+  flex: 1;
+  padding: 30px;
+}
+
+/* Docs wale dabba ki right side par line */
+#docs {
+  border-right: 1px solid var(--border);
+}
+
+/* Choti screen par boxes ek ke niche ek ayenge */
+@media (max-width: 1024px) {
+  #next-steps {
+    flex-direction: column;
+  }
+  #docs {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+/* Links ki list ka style */
+#next-steps ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 10px;
+}
+
+#next-steps a {
+  background: var(--social-bg);
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+/* Page ke end par thodi jagah chorni hai */
+#spacer {
+  height: 80px;
+  border-top: 1px solid var(--border);
+}
