@@ -10,23 +10,24 @@ import {
 } from 'lucide-react';
 
 const Sidebar = () => {
-  // 1. Local storage se check karein ge ke pehle user ne kya select kiya tha
+  // Theme state configuration
   const [isDark, setIsDark] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
     return savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
   });
 
-  // Toggle handle karne wala useEffect
+  // Theme toggle effects
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark'); // Save preference
+      localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light'); // Save preference
+      localStorage.setItem('theme', 'light');
     }
   }, [isDark]); 
 
+  // Updated URL configuration for clean routing matching
   const myLinks = [
     { label: 'Operations', url: '/', icon: <DashIcon size={18} /> },
     { label: 'Tasks', url: '/tasks', icon: <TaskIcon size={18} /> },
@@ -49,9 +50,7 @@ const Sidebar = () => {
             key={link.label} 
             to={link.url} 
             className={({ isActive }) => { 
-              // 2. border-l-4 border-transparent lagaya taake active hote waqt layout hilay nahi
               const baseStyle = "flex items-center gap-4 px-4 py-3 rounded-lg mb-1 text-sm transition border-l-4";
-              
               const activeStyle = "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-semibold border-blue-600";
               const normalStyle = "border-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800";
               

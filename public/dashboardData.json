@@ -1,0 +1,13 @@
+{
+  "stats": {
+    "pendingTasks": 98,
+    "completedTasks": 156,
+    "activeStaff": 24
+  },
+  "recentTasks": [
+    { "id": 1, "leadMember": "Ahmad Ali", "status": "In Progress", "priority": "High" },
+    { "id": 2, "leadMember": "Sara Khan", "status": "Completed", "priority": "Medium" },
+    { "id": 3, "leadMember": "Zainab", "status": "Pending", "priority": "High" },
+    { "id": 4, "leadMember": "Hamza", "status": "In Progress", "priority": "Low" }
+  ]
+}
