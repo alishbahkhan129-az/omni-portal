@@ -1,65 +1,75 @@
-import { Mail, MoreVertical } from 'lucide-react'; //Icons import
+import { Mail, MoreVertical } from 'lucide-react'; 
 
-// MemberCard: Har bande ki info (Name, Job, Status, Initials) display karta hai
-const MemberCard = ({ fullName, jobTitle, isOnline, letter }) => {
+// Premium Member Card Component
+const MemberCard = ({ fullName, jobTitle, isOnline, letter, avatarBg }) => {
   return (
-    <div className="bg-white dark:bg-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col items-center text-center relative shadow-sm transition-colors">
-      {/* Upper side wala chota menu button */}
-      <button className="absolute top-3 right-3 text-gray-300 hover:text-gray-400">
+    <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800/60 flex flex-col items-center text-center relative shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group">
+      
+      {/* Absolute Options Menu */}
+      <button className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
         <MoreVertical size={14} />
       </button>
 
-      {/* Profile ki jagah initials wala circle - color check kar rahay hain */}
-      <div className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold mb-3 ${
-        isOnline === 'Active' 
-          ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400' 
-          : 'bg-gray-50 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
-      }`}>
+      {/* Profile Initials with Dynamic Aesthetic Colors */}
+      <div className={`w-16 h-16 rounded-full flex items-center justify-center text-lg font-bold mb-4 shadow-inner transform group-hover:scale-105 transition-transform duration-200 ${avatarBg}`}>
         {letter}
       </div>
 
-      {/* Naam aur unki position */}
-      <h3 className="font-semibold text-gray-700 dark:text-white">{fullName}</h3>
-      <p className="text-[11px] text-gray-400 mb-4">{jobTitle}</p>
+      {/* Name and Designation */}
+      <h3 className="font-bold text-gray-800 dark:text-white tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+        {fullName}
+      </h3>
+      <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 mb-4 font-medium">{jobTitle}</p>
 
-      {/* Online/Offline status wala dot */}
-      <div className="flex items-center gap-1.5 mb-5">
-        <div className={`w-2 h-2 rounded-full ${isOnline === 'Active' ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`}></div>
-        <span className="text-[10px] text-gray-400 font-bold uppercase">{isOnline}</span>
+      {/* Dynamic Status Badges (Active vs Away vs Offline) */}
+      <div className="flex items-center gap-1.5 mb-6">
+        <div className={`w-2 h-2 rounded-full ${
+          isOnline === 'Active' ? 'bg-emerald-500' : 
+          isOnline === 'Away' ? 'bg-amber-500' : 'bg-gray-300'
+        }`} />
+        <span className={`text-[10px] font-bold uppercase tracking-wider ${
+          isOnline === 'Active' ? 'text-emerald-600 dark:text-emerald-400' : 
+          isOnline === 'Away' ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400'
+        }`}>
+          {isOnline}
+        </span>
       </div>
 
-      {/* Message bhejne ka button */}
-      <button className="w-full py-2 border border-gray-100 dark:border-gray-700 rounded-md flex items-center justify-center gap-2 text-xs text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-        <Mail size={12} /> Send Email
+      {/* Premium Action Button */}
+      <button className="w-full py-2.5 border border-gray-100 dark:border-gray-800 rounded-xl flex items-center justify-center gap-2 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-blue-600 hover:text-white hover:border-blue-600 dark:hover:bg-blue-600 dark:hover:text-white dark:hover:border-blue-600 active:scale-95 transition-all shadow-sm">
+        <Mail size={13} /> <span>Send Email</span>
       </button>
     </div>
   );
 };
 
 const Team = () => {
-  // Members ka array: Isme maine details thori change ki hain
+  // Added dynamic background classes for beautiful distinct profile circles
   const myTeam = [
-    { fullName: "Ahmad Ali", jobTitle: "Lead Developer", isOnline: "Active", letter: "AA" },
-    { fullName: "Sara Khan", jobTitle: "UI/UX Designer", isOnline: "Active", letter: "SK" },
-    { fullName: "Zainab", jobTitle: "Project Manager", isOnline: "Away", letter: "Z" },
-    { fullName: "Hamza", jobTitle: "QA Engineer", isOnline: "Active", letter: "H" },
+    { fullName: "Ahmad Ali", jobTitle: "Lead Developer", isOnline: "Active", letter: "AA", avatarBg: "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400" },
+    { fullName: "Sara Khan", jobTitle: "UI/UX Designer", isOnline: "Active", letter: "SK", avatarBg: "bg-pink-50 dark:bg-pink-950/40 text-pink-600 dark:text-pink-400" },
+    { fullName: "Zainab", jobTitle: "Project Manager", isOnline: "Away", letter: "Z", avatarBg: "bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400" },
+    { fullName: "Hamza", jobTitle: "QA Engineer", isOnline: "Active", letter: "H", avatarBg: "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400" },
   ];
 
   return (
-    <div className="p-2">
+    <div className="p-4 space-y-6">
       {/* Page Heading */}
-      <h1 className="text-xl font-bold text-gray-800 dark:text-white mb-6">Team Directory</h1>
+      <div>
+        <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight">Team Directory</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage and connect with your organization workspace members.</p>
+      </div>
 
-      {/* Cards ko row mein set kiya hai */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Grid Layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {myTeam.map((person, idx) => (
-          // Component ko manually props bhej rahi hun
           <MemberCard 
             key={idx} 
             fullName={person.fullName}
             jobTitle={person.jobTitle}
             isOnline={person.isOnline}
             letter={person.letter}
+            avatarBg={person.avatarBg}
           />
         ))}
       </div>
@@ -68,7 +78,3 @@ const Team = () => {
 };
 
 export default Team;
-
-// nitials logic: letter prop ka use kiya gaya hai profile picture ki jagah, jo ke clean design lagta hai.
-// Relative/Absolute: Card container relative hai aur menu button absolute, iska matlab menu button hamesha card ke kone mein hi rahega chahe card kitna bhi bada ho.
-// Flexbox: flex-col items-center ka matlab hai ke card ke andar saari cheezein center mein ek ke niche ek aayengi.

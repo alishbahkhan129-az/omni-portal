@@ -1,3 +1,36 @@
 @import "tailwindcss";
-/* Ye line Tailwind ko batayegi ke 'dark' class dekh kar mode change kare */
+
+/* 1. Custom Variant (Dark Mode Support) */
 @custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  /* 2. Global Font Setup */
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+  html {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900 transition-colors duration-300;
+  }
+
+  .dark body {
+    @apply bg-[#0b0f19] text-gray-100;
+  }
+}
+
+/* 3. Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-200 dark:bg-gray-800 rounded-full;
+}
+
+/* 4. Selection Highlight */
+::selection {
+  @apply bg-blue-500/20 text-blue-600;
+}

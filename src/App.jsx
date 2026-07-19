@@ -5,16 +5,23 @@ import Tasks from './pages/Tasks';
 import Projects from './pages/Projects'; 
 import Team from './pages/Team'; 
 
-// Ye Layout wala hissa main hai, isse sidebar har page pe nazar ayega
+// 1. Chota sa 404 Component (Isay tum baad mein alag page bhi bana sakti ho)
+const NotFound = () => {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+      <h1 className="text-4xl font-bold text-red-500 mb-2">404</h1>
+      <p className="text-gray-600 dark:text-gray-400">Oops! Page not found.</p>
+    </div>
+  );
+};
+
+// Main Layout
 const MainLayout = () => {
   return (
     <div className="flex bg-gray-50 dark:bg-gray-950 min-h-screen transition-colors duration-300">
-      {/* Sidebar hamesha left pe rahega */}
       <Sidebar />
-      
-      {/* Right side wala area jahan pages change honge */}
-      <main className="flex-1 p-8 ml-60"> 
-        {/* Outlet ka matlab hai ke nested routes yahan show honge */}
+      {/* ml-60 padding lagayi hai, dhyan rakhna Sidebar ki width bhi w-60 hi ho taake content chupay nahi */}
+      <main className="flex-1 p-8 ml-60 text-gray-900 dark:text-gray-100"> 
         <Outlet />
       </main>
     </div>
@@ -25,17 +32,14 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Sabse pehle layout load hoga, phir uske andar baqi pages */}
         <Route path="/" element={<MainLayout />}>
-          
-          {/* Index ka matlab hai ke "/" par ye page khulega */}
           <Route index element={<Operations />} />
-          
-          {/* Baqi pages ke paths yahan hain */}
           <Route path="tasks" element={<Tasks />} />
           <Route path="projects" element={<Projects />} />
           <Route path="team" element={<Team />} />
           
+          {/* 2. Yeh route har galat URL ko pakar kar 404 dikhaye ga */}
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </BrowserRouter>
