@@ -1,8 +1,12 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { ListTodo, CheckCircle2, Users, BarChart3, MoreVertical, X } from "lucide-react";
 
 export default function Operations() {
-  const [data, setData] = useState(null);
+  // Safe initial fallback structure taake Vercel par kabi null error na aaye
+  const [data, setData] = useState({
+    stats: { pendingTasks: 0, completedTasks: 0, activeStaff: 0 },
+    recentTasks: []
+  });
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -11,16 +15,23 @@ export default function Operations() {
     priority: "Medium"
   });
 
-  // 1️⃣ Pehle local storage check karein ge, agar wahan data nahi hai toh JSON file fetch hogi
   useEffect(() => {
     const savedData = localStorage.getItem("omni_operations_data");
 
     if (savedData) {
-      setData(JSON.parse(savedData));
+      try {
+        const parsed = JSON.parse(savedData);
+        if (parsed) setData(parsed);
+      } catch (e) {
+        console.error("Error parsing localStorage data", e);
+      }
       setLoading(false);
     } else {
       fetch("/dashboardData.json")
-        .then((response) => response.json())
+        .then((response) => {
+          if (!response.ok) throw new Error("Network response was not ok");
+          return response.json();
+        })
         .then((jsonData) => {
           setData(jsonData);
           localStorage.setItem("omni_operations_data", JSON.stringify(jsonData));
@@ -44,11 +55,11 @@ export default function Operations() {
       priority: formData.priority
     };
 
-    // 2️⃣ Naya data state mein add karne ke sath sath Local Storage mein bhi save karna
     setData((prevData) => {
+      const safePrevData = prevData || { stats: { pendingTasks: 0, completedTasks: 0, activeStaff: 0 }, recentTasks: [] };
       const updatedData = {
-        ...prevData,
-        recentTasks: [newTask, ...prevData.recentTasks]
+        ...safePrevData,
+        recentTasks: [newTask, ...(safePrevData.recentTasks || [])]
       };
       localStorage.setItem("omni_operations_data", JSON.stringify(updatedData));
       return updatedData;
@@ -66,14 +77,6 @@ export default function Operations() {
     );
   }
 
-  if (!data) {
-    return (
-      <div className="p-6 flex items-center justify-center h-full">
-        <p className="text-lg font-medium text-red-500">Failed to load dashboard data.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="p-4 space-y-6 relative">
       {/* Header */}
@@ -83,8 +86,9 @@ export default function Operations() {
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Real-time system updates and internal metrics.</p>
         </div>
         <button 
+          type="button"
           onClick={() => setIsModalOpen(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition shadow-sm active:scale-95"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition shadow-sm active:scale-95 cursor-pointer"
         >
           + Add New
         </button>
@@ -95,7 +99,7 @@ export default function Operations() {
         <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800/60 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Pending Tasks</p>
-            <h3 className="text-2xl font-black mt-1 text-gray-800 dark:text-white">{data.stats.pendingTasks}</h3>
+            <h3 className="text-2xl font-black mt-1 text-gray-800 dark:text-white">{data?.stats?.pendingTasks || 0}</h3>
           </div>
           <div className="p-3 bg-amber-50 dark:bg-amber-950/40 text-amber-500 rounded-xl">
             <ListTodo size={20} />
@@ -105,7 +109,7 @@ export default function Operations() {
         <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800/60 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Completed</p>
-            <h3 className="text-2xl font-black mt-1 text-gray-800 dark:text-white">{data.stats.completedTasks}</h3>
+            <h3 className="text-2xl font-black mt-1 text-gray-800 dark:text-white">{data?.stats?.completedTasks || 0}</h3>
           </div>
           <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-500 rounded-xl">
             <CheckCircle2 size={20} />
@@ -115,7 +119,7 @@ export default function Operations() {
         <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800/60 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Active Staff</p>
-            <h3 className="text-2xl font-black mt-1 text-gray-800 dark:text-white">{data.stats.activeStaff}</h3>
+            <h3 className="text-2xl font-black mt-1 text-gray-800 dark:text-white">{data?.stats?.activeStaff || 0}</h3>
           </div>
           <div className="p-3 bg-blue-50 dark:bg-blue-950/40 text-blue-500 rounded-xl">
             <Users size={20} />
@@ -141,33 +145,41 @@ export default function Operations() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-800/40 text-sm">
-              {data.recentTasks.map((task) => (
-                <tr key={task.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/20 transition-colors">
-                  <td className="px-6 py-4 font-medium text-gray-800 dark:text-gray-200">{task.leadMember}</td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center gap-1 text-xs font-semibold ${
-                      task.status === "Completed" ? "text-emerald-500" :
-                      task.status === "In Progress" ? "text-blue-500" : "text-amber-500"
-                    }`}>
-                      • {task.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${
-                      task.priority === "High" ? "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400" :
-                      task.priority === "Medium" ? "bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400" :
-                      "bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
-                    }`}>
-                      {task.priority}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded-lg">
-                      <MoreVertical size={14} />
-                    </button>
+              {data?.recentTasks && data.recentTasks.length > 0 ? (
+                data.recentTasks.map((task) => (
+                  <tr key={task.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/20 transition-colors">
+                    <td className="px-6 py-4 font-medium text-gray-800 dark:text-gray-200">{task.leadMember}</td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center gap-1 text-xs font-semibold ${
+                        task.status === "Completed" ? "text-emerald-500" :
+                        task.status === "In Progress" ? "text-blue-500" : "text-amber-500"
+                      }`}>
+                        • {task.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${
+                        task.priority === "High" ? "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400" :
+                        task.priority === "Medium" ? "bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400" :
+                        "bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                      }`}>
+                        {task.priority}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <button type="button" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded-lg">
+                        <MoreVertical size={14} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="px-6 py-6 text-center text-gray-400 text-sm">
+                    No operations logs found. Click "+ Add New" to add one.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
@@ -179,7 +191,7 @@ export default function Operations() {
           <div className="bg-white dark:bg-gray-900 border dark:border-gray-800 w-full max-w-md p-6 rounded-2xl shadow-xl space-y-4 text-gray-900 dark:text-white">
             <div className="flex justify-between items-center border-b dark:border-gray-800 pb-3">
               <h3 className="text-lg font-bold">Add New Operations Log</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded-lg">
+              <button type="button" onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded-lg">
                 <X size={18} />
               </button>
             </div>
